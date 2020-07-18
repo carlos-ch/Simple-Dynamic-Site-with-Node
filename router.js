@@ -1,6 +1,6 @@
 const Profile = require("./profile.js");
 const renderer = require('./renderer.js');
-
+const commonHeaders = ['Content-Type', 'text/html']
 
 // (2.) Handle HTTP route GET / and POST / i.e. Home
 function home(request, response) {
@@ -8,10 +8,11 @@ function home(request, response) {
   if (request.url === '/') {
     //show search
     response.statusCode = 200;
-    response.setHeader('Content-Type', 'text/plain');
+    response.setHeader(...commonHeaders);
     renderer.view("header", {}, response);
     renderer.view("search", {}, response);
     renderer.view("footer", {}, response);
+    response.end()
   }
   // if url == '/' && POST
     // redirect to /:username
@@ -25,7 +26,7 @@ function user(request, response) {
   let username = request.url.replace("/", "");
   if (username.length > 0) {
     response.statusCode = 200;
-    response.setHeader('Content-Type', 'text/plain');
+    response.setHeader(...commonHeaders);
     renderer.view("header", {}, response);
     // get json from Treehouse
     var studentProfile = new Profile(username);
@@ -43,7 +44,7 @@ function user(request, response) {
       // Simple response
       renderer.view("profile", values, response);
       renderer.view("footer", {}, response);
-
+      response.end();
     });
 
     // on "error"
@@ -52,6 +53,7 @@ function user(request, response) {
       renderer.view("error", {errorMessage: error.message}, response);
       renderer.view("search", {}, response);
       renderer.view("footer", {}, response);
+      response.end();
     });
 
 
